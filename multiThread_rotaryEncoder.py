@@ -67,6 +67,7 @@ try:
         
         print("leftEncoderValue: ", leftEncoderValue, "leftEncoderDirection: ", leftEncoderDirection, "rightOpen: ", rightRobinetIsOpen)
         print("rightEncoderValue: ", rightEncoderValue, "rightEncoderDirection: ", rightEncoderDirection, "leftOpen: ", leftRobinetIsOpen)
+        sleep(1)
     # clkLastState = GPIO.input(clk)
     
             
