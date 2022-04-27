@@ -11,8 +11,7 @@ clkRight = 17
 dtRight = 18
 clkLeft = 22
 dtLeft = 23
-global leftRobinetIsOpen
-global rightRobinetIsOpen
+
 global leftEncoderValue
 global rightEncoderValue
 global leftEncoderDirection
@@ -20,8 +19,9 @@ global rightEncoderDirection
 
 leftEncoderCallback = None
 rightEncoderCallback = None
-
+global leftRobinetIsOpen
 leftRobinetIsOpen = False # True si le robinet de gauche s'ouvre, False si le robinet se referme
+global rightRobinetIsOpen
 rightRobinetIsOpen = False  #True si le robinet de droite s'ouvre, false si il se ferme
 nombrePushSavon = 0  
 personneEstDevantRobinet = False
@@ -39,20 +39,16 @@ def leftEncoderValueChanged(value, direction):
     leftEncoderValue = value
     leftEncoderDirection = direction
     if leftEncoderDirection == 'R':
-        global leftRobinetIsOpen
         leftRobinetIsOpen = True
     elif leftEncoderDirection == 'L':
-        global leftRobinetIsOpen
         leftRobinetIsOpen = False
 
 def rightEncoderValueChanged(value, direction):
     rightEncoderValue = value
     rightEncoderDirection = direction
     if rightEncoderDirection == 'R':
-        global rightRobinetIsOpen
         rightRobinetIsOpen = True
     elif rightEncoderDirection == 'L':
-        global rightRobinetIsOpen
         rightRobinetIsOpen = False
 
 try:
