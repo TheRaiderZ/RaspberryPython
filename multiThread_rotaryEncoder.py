@@ -61,9 +61,10 @@ def rightEncoderValueChanged(value, direction):
 
 try:
     GPIO.setmode(GPIO.BCM)
+    leftEncoder = Encoder(clkLeft, dtLeft, callback=leftEncoderValueChanged)
+    rightEncoder = Encoder(clkRight, dtRight, callback=rightEncoderValueChanged)
     while True:
-        leftEncoder = Encoder(clkLeft, dtLeft, callback=leftEncoderValueChanged)
-        rightEncoder = Encoder(clkRight, dtRight, callback=rightEncoderValueChanged)
+        
         print("leftEncoderValue: ", leftEncoderValue, "leftEncoderDirection: ", leftEncoderDirection, "rightOpen: ", rightRobinetIsOpen)
         print("rightEncoderValue: ", rightEncoderValue, "rightEncoderDirection: ", rightEncoderDirection, "leftOpen: ", leftRobinetIsOpen)
     # clkLastState = GPIO.input(clk)
