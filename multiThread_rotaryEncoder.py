@@ -11,6 +11,12 @@ clkRight = 17
 dtRight = 18
 clkLeft = 22
 dtLeft = 23
+global leftRobinetIsOpen
+global rightRobinetIsOpen
+global leftEncoderValue
+global rightEncoderValue
+global leftEncoderDirection
+global rightEncoderDirection
 
 leftEncoderCallback = None
 rightEncoderCallback = None
