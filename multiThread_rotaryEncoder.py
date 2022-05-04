@@ -2,7 +2,7 @@ from RPi import GPIO
 from time import sleep
 from threading import Thread
 from encoder import Encoder
-
+from gpiozero import Button
 
 # clk = 17
 # dt = 18
@@ -11,6 +11,8 @@ clkRight = 17
 dtRight = 18
 clkLeft = 22
 dtLeft = 23
+
+buttonGPIO = 27
 
 # global leftEncoderValue
 # global rightEncoderValue
@@ -61,12 +63,18 @@ def rightEncoderValueChanged(value, direction):
 
 try:
     GPIO.setmode(GPIO.BCM)
+    buttonSavon = Button(buttonGPIO, None,True)
     leftEncoder = Encoder(clkLeft, dtLeft, callback=leftEncoderValueChanged)
     rightEncoder = Encoder(clkRight, dtRight, callback=rightEncoderValueChanged)
     while True:
+        if buttonSavon.is_pressed:
+            nombrePushSavon+=1
+            sleep(0.5)
+        
         print('\033c')
         print('\r'+"leftEncoderValue: ", leftEncoderValue, "leftEncoderDirection: ", leftEncoderDirection, "rightOpen: ", rightRobinetIsOpen)
         print('\r'+"rightEncoderValue: ", rightEncoderValue, "rightEncoderDirection: ", rightEncoderDirection, "leftOpen: ", leftRobinetIsOpen)
+        print('\r'+"nombrePushSavon: ", nombrePushSavon)
         sleep(0.05)
     # clkLastState = GPIO.input(clk)
     
