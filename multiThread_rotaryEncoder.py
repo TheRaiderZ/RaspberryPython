@@ -64,10 +64,10 @@ try:
     leftEncoder = Encoder(clkLeft, dtLeft, callback=leftEncoderValueChanged)
     rightEncoder = Encoder(clkRight, dtRight, callback=rightEncoderValueChanged)
     while True:
-        
-        print("leftEncoderValue: ", leftEncoderValue, "leftEncoderDirection: ", leftEncoderDirection, "rightOpen: ", rightRobinetIsOpen)
-        print("rightEncoderValue: ", rightEncoderValue, "rightEncoderDirection: ", rightEncoderDirection, "leftOpen: ", leftRobinetIsOpen)
-        sleep(1)
+        print('\033c')
+        print('\r'+"leftEncoderValue: ", leftEncoderValue, "leftEncoderDirection: ", leftEncoderDirection, "rightOpen: ", rightRobinetIsOpen)
+        print('\r'+"rightEncoderValue: ", rightEncoderValue, "rightEncoderDirection: ", rightEncoderDirection, "leftOpen: ", leftRobinetIsOpen)
+        sleep(0.05)
     # clkLastState = GPIO.input(clk)
     
             
