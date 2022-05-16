@@ -9,16 +9,18 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 CORS(app, resources={r"/*": {"origins": "*"}})
 data = {
-    "data": [
+    "data":
     {
       "rotationG": -28,
-      "rotationR": -12
-    },
-    {
+      "rotationD": -12,
       "distance": 20,
+
+      "savon": 5555,
+      "temps" : 1000
     }
-  ]
 }
+
+
 
 
 @app.route('/getData', methods=['GET'])

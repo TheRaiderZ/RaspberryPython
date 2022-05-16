@@ -1,50 +1,69 @@
 <template>
   <div>
     <h1 class="titre">MLAB</h1>
-    <resultat eau="0" savon="7"></resultat>
+    <c-resultat :distance="distance" 
+    :savon="savon"  
+    :temps="temps" 
+    :rotationG="rotationG" 
+    :rotationD= "rotationD"></c-resultat>
+
   </div>
 </template>
 
 <script>
-import Resultat from "./components/Resultat.vue";
-// import axios from "axios";
+import CResultat from "./components/Resultat.vue";
 
 export default {
   name: "App",
   components: {
-    Resultat,
+    CResultat,
   },
-  data(){
-    return{
-      resultat: null,
+  data() {
+    return {
+      result: null,
+    };
+  },
+  computed: {
+    savon() {
+      return this.result.savon ?? 0.1;
+    },
+    temps() {
+      return this.result.temps ?? 0.1;
+    },
+    distance() {
+      return this.result.distance ?? 0.1;
+    },
+    rotationG() {
+      return this.result.rotationG ?? 0.1;
+    },
+    rotationD() {
+      return this.result.rotationD ?? 0.1;
     }
+
   },
-  methods:{
-    getResultat(){
-       fetch("http://127.0.0.1:5000/getData")
-    // axios
-      // .get("https://localhost:5000/getData")
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err=>{
-        console.log({err})
-      })
+  methods: {
+    getResultat() {
+      fetch("http://127.0.0.1:5000/getData")
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          this.result = data.data;
+          console.log("data", this.result);
+        })
+        .catch((err) => {
+          console.log({ err });
+        });
     },
   },
-
-  created(){
+  beforeMount() {
     this.getResultat();
 
     setInterval(() => {
       this.getResultat();
-    }, 10000);
+    }, 100000);
   },
-  beforeMount() {
-
-   
-  },
-}
+};
 </script>
 
 <style>

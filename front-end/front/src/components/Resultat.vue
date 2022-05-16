@@ -1,9 +1,9 @@
 <template>
   <div class="container">
       <div class="oneline">
-          <h2>Temps du lavage : </h2>
+          <h2>Distance du levier : </h2>
           <p>
-              {{scoreEau}} / 10
+              {{distance}}
           </p>
       </div>
 
@@ -13,6 +13,14 @@
               {{scoreSavon}} / 10
           </p>
       </div>
+
+        <div class="oneline">
+          <h2>Temps:</h2>
+          <p>
+              {{scoreTemps}}
+          </p>
+      </div>
+      
   </div>
 </template>
 
@@ -20,21 +28,28 @@
 export default {
     name: 'MyResultat',
     computed:{
-        scoreEau(){
-            return this.eau
+        scoreDistance(){
+            return this.distance
         },
         scoreSavon(){
             return this.savon
+        },
+        scoreTemps(){
+            return this.temps
         }
     },
     props:{
-        eau :{
+        distance :{
             type: Number,
             required: true
         },
         savon:{
             type:Number,
             required : true
+        },
+        temps:{
+            type:Number,
+            required: true
         }
     },
     methods:{
