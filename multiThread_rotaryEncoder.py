@@ -8,7 +8,7 @@ import flask
 import json
 import typing
 from SensorData import *
-
+from Timer import Timer
 
 try:
 
@@ -46,10 +46,14 @@ try:
     leftRobinetIsOpen = False # True si le robinet de gauche s'ouvre, False si le robinet se referme
     # global rightRobinetIsOpen
     rightRobinetIsOpen = False  #True si le robinet de droite s'ouvre, false si il se ferme
-    nombrePushSavon = 0  
+    nombrePushSavon = 0 
     personneEstDevantRobinet = False
     distance = 0
     sensorData=None
+    timerLavage = Timer()
+
+    timerGauche = Timer()
+    timerDroit = Timer()
 
 
     # threadLeft = Thread(target=startRotary,args=(22,23, 'l'))
@@ -60,6 +64,7 @@ try:
     rightEncoderValue = 0
     leftEncoderValue = 0
 
+    seLaveLesMains = False
 
 
     def leftEncoderValueChanged(value, direction):
@@ -155,37 +160,80 @@ try:
     rightEncoder = Encoder(clkRight, dtRight, callback=rightEncoderValueChanged)
     
     while True:
+       
+
         distance = sensor.Measurement(trigPin, echoPin)
         raw_measurement = distance.raw_distance()
-        buttonSavon.when_activated
+        if raw_measurement < 20: personneEstDevantRobinet = True 
+        else: personneEstDevantRobinet = False
+        
+        if leftEncoderValue > 5: leftRobinetIsOpen = True
+        else: leftRobinetIsOpen = False
+        
+        if rightEncoderValue > 5: rightRobinetIsOpen = True
+        else: rightRobinetIsOpen = False
+
+        seLaveLesMains=(personneEstDevantRobinet and (leftRobinetIsOpen or rightRobinetIsOpen))
+        if seLaveLesMains and timerLavage.timestarted is None: timerLavage.start()
+        elif not seLaveLesMains and timerLavage.timestarted is not None: timerLavage.pause()
+
+        if leftRobinetIsOpen and timerGauche.timestarted is None: #Gauche ouvert et pas encore démarré
+            timerGauche.start()
+        
+        if rightRobinetIsOpen and timerDroit.timestarted is None: #Droit ouvert et pas encore démarré
+            timerDroit.start()
+        
+        if not leftRobinetIsOpen and timerGauche.timestarted is not None: #Gauche fermé et démarré
+            timerGauche.pause()
+        elif leftRobinetIsOpen and timerGauche.paused: #Gauche ouvert et en pause
+            timerGauche.resume()
+        
+        if not rightRobinetIsOpen and timerDroit.timestarted is not None: #Droit fermé et démarré
+            timerDroit.pause()
+        elif rightRobinetIsOpen and timerDroit.paused: #Droit ouvert et en pause
+            timerDroit.resume()
+        
+        
+
         if buttonSavon.is_pressed:
             nombrePushSavon+=1
             sleep(0.5)
-        print('\033c')
-        print('\r'+"leftEncoderValue: ", leftEncoderValue, "leftEncoderDirection: ", leftEncoderDirection, "rightOpen: ", rightRobinetIsOpen)
-        print('\r'+"rightEncoderValue: ", rightEncoderValue, "rightEncoderDirection: ", rightEncoderDirection, "leftOpen: ", leftRobinetIsOpen)
-        print('\r'+"nombrePushSavon: ", nombrePushSavon)
-        print('\r'+'Raw distance: ', raw_measurement)
-        # obj = Data(rotation_d=rightEncoderValue, rotation_g=leftEncoderValue, savon=nombrePushSavon, distance=raw_measurement).to_dict
-        # sensorData=SensorData(obj)
-        # data=sensorData.to_dict()
-        print(data)
-        sleep(0.05)
-        data = {
-            "data":
-                {
-                "rotationG": leftEncoderValue,
-                "rotationD": rightEncoderValue,
-                "distance": raw_measurement,
 
-                "savon": nombrePushSavon,
-                "temps" : 0
+        if seLaveLesMains:
+            print('\033c')
+            print('\r'+"leftEncoderValue: ", leftEncoderValue, "leftEncoderDirection: ", leftEncoderDirection, "rightOpen: ", rightRobinetIsOpen)
+            print('\r'+"rightEncoderValue: ", rightEncoderValue, "rightEncoderDirection: ", rightEncoderDirection, "leftOpen: ", leftRobinetIsOpen)
+            print('\r'+"nombrePushSavon: ", nombrePushSavon)
+            print('\r'+'Raw distance: ', raw_measurement)
+            print('\r'+'seLaveLesMains: ', seLaveLesMains)
+            print('\r'+'timerLavage.timestarted: ', timerLavage.timestarted, 'timerLavage.timeleft: ', timerLavage.get(), 'timerLavage.elapsedPaused: ', timerLavage.getElapsedPaused())
+            print('\r'+'timerGauche.timestarted: ', timerGauche.timestarted, 'timerGauche.timeleft: ', timerGauche.get())
+            print('\r'+'timerDroit.timestarted: ', timerDroit.timestarted, 'timerDroit.timeleft: ', timerDroit.get())
+
+            # obj = Data(rotation_d=rightEncoderValue, rotation_g=leftEncoderValue, savon=nombrePushSavon, distance=raw_measurement).to_dict
+            # sensorData=SensorData(obj)
+            # data=sensorData.to_dict()
+            # print(data)
+            sleep(0.05)
+            data = {
+                "data":
+                    {
+                    "rotationG": leftEncoderValue,
+                    "rotationD": rightEncoderValue,
+                    "distance": raw_measurement,
+
+                    "savon": nombrePushSavon,
+                    "temps" : timerLavage.get(),
+                    "tempsGauche" : timerGauche.get(),
+                    "tempsDroit" : timerDroit.get(),
+                    }
                 }
-            }
-        #output data in json format, if file is not found, create it
-        with open('data.json', 'w') as outfile:
-            json.dump(data, outfile)
-
+            #output data in json format, if file is not found, create it
+            if timerLavage.getElapsedPaused().seconds>30:
+                with open('data.json', 'w') as outfile:
+                    json.dump(data, outfile)
+                break
+        
     # clkLastState = GPIO.input(clk)
     
             

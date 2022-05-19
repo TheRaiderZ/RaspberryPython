@@ -1,18 +1,22 @@
 <template>
   <div>
     <h1 class="titre">MLAB</h1>
+    <h2 class="">Votre lavage de main a duré {{this.temps.toFixed(2)}}s !</h2>
     <c-resultat :distance="distance" 
     :savon="savon"  
     :temps="temps" 
     :rotationG="rotationG" 
-    :rotationD= "rotationD"></c-resultat>
+    :rotationD="rotationD"
+    :tempsGauche="tempsGauche"
+    :tempsDroit="tempsDroit"
+    ></c-resultat>
 
   </div>
 </template>
 
 <script>
 import CResultat from "./components/Resultat.vue";
-
+// import dataJson from '../../../data.json';
 export default {
   name: "App",
   components: {
@@ -21,39 +25,48 @@ export default {
   data() {
     return {
       result: null,
+      
     };
   },
   computed: {
     savon() {
-      return this.result.savon ?? 0.1;
+      return this.result.savon ?? 0;
     },
     temps() {
-      return this.result.temps ?? 0.1;
+      return this.result.temps ?? 0;
     },
     distance() {
-      return this.result.distance ?? 0.1;
+      return this.result.distance ?? 0;
     },
     rotationG() {
-      return this.result.rotationG ?? 0.1;
+      return this.result.rotationG ?? 0;
     },
     rotationD() {
-      return this.result.rotationD ?? 0.1;
-    }
+      return this.result.rotationD ?? 0;
+    },
+    tempsGauche() {
+      return this.result.tempsGauche ?? 0;
+    },
+    tempsDroit() {
+      return this.result.tempsDroit ?? 0;
+    },
 
   },
   methods: {
-    getResultat() {
-      fetch("http://127.0.0.1:5000/getData")
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          this.result = data.data;
-          console.log("data", this.result);
-        })
-        .catch((err) => {
-          console.log({ err });
-        });
+    async getResultat() {
+      import("../../../data.json").then(data=>this.result=data.data).then(()=>console.log(this.result));
+     
+      // fetch("http://127.0.0.1:5000/getData")
+      //   .then((res) => {
+      //     return res.json();
+      //   })
+      //   .then((data) => {
+      //     this.result = data.data;
+      //     console.log("data", this.result);
+      //   })
+      //   .catch((err) => {
+      //     console.log({ err });
+      //   });
     },
   },
   beforeMount() {
